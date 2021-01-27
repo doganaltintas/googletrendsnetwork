@@ -54,7 +54,7 @@ def load_data(xinputList):
     xconcat["to"]= xconcat["to"].str.strip()
     xconcat = xconcat.groupby(["from","to"]).sum().reset_index(drop=False)
 
-    got_net = Network("900px", "700px",heading='Network Map',notebook=True)
+    got_net = Network("900px", "700px",heading='Network Map - Click and Move',notebook=True)
 
     sources = xconcat['from']
     targets = xconcat['to']
