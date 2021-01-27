@@ -1,0 +1,108 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1>Network Map</h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 700px;
+            height: 900px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"id": "apache spark", "label": "apache spark", "shape": "dot", "title": "apache spark Neighbors:\u003cbr\u003ehadoop", "value": 1}, {"id": "hadoop", "label": "hadoop", "shape": "dot", "title": "hadoop Neighbors:\u003cbr\u003esql\u003cbr\u003emongodb\u003cbr\u003ebig data\u003cbr\u003eapache spark\u003cbr\u003ecassandra\u003cbr\u003ehive\u003cbr\u003espark", "value": 7}, {"id": "big data", "label": "big data", "shape": "dot", "title": "big data Neighbors:\u003cbr\u003ehadoop", "value": 1}, {"id": "cassandra", "label": "cassandra", "shape": "dot", "title": "cassandra Neighbors:\u003cbr\u003ehadoop", "value": 1}, {"id": "dji spark", "label": "dji spark", "shape": "dot", "title": "dji spark Neighbors:\u003cbr\u003emavic", "value": 1}, {"id": "mavic", "label": "mavic", "shape": "dot", "title": "mavic Neighbors:\u003cbr\u003edji spark\u003cbr\u003espark", "value": 2}, {"id": "hive", "label": "hive", "shape": "dot", "title": "hive Neighbors:\u003cbr\u003espark\u003cbr\u003ehadoop", "value": 2}, {"id": "mongodb", "label": "mongodb", "shape": "dot", "title": "mongodb Neighbors:\u003cbr\u003ehadoop", "value": 1}, {"id": "spark", "label": "spark", "shape": "dot", "title": "spark Neighbors:\u003cbr\u003ehive\u003cbr\u003emavic\u003cbr\u003ehadoop", "value": 3}, {"id": "sql", "label": "sql", "shape": "dot", "title": "sql Neighbors:\u003cbr\u003ehadoop", "value": 1}]);
+        edges = new vis.DataSet([{"from": "apache spark", "to": "hadoop", "value": 25}, {"from": "big data", "to": "hadoop", "value": 43}, {"from": "cassandra", "to": "hadoop", "value": 27}, {"from": "dji spark", "to": "mavic", "value": 30}, {"from": "hadoop", "to": "hive", "value": 36}, {"from": "hadoop", "to": "mongodb", "value": 30}, {"from": "hadoop", "to": "spark", "value": 133}, {"from": "hadoop", "to": "sql", "value": 28}, {"from": "hive", "to": "spark", "value": 17}, {"from": "mavic", "to": "spark", "value": 44}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+
+        
+
+
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>

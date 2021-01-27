@@ -1,0 +1,7 @@
+pytrends
+streamlit
+pandas
+altair
+pandas
+numpy
+pyvis
