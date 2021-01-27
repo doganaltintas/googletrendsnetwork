@@ -1,0 +1,108 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1>Network Map</h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 700px;
+            height: 900px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"id": "accumulo", "label": "accumulo", "shape": "dot", "title": "accumulo Neighbors:\u003cbr\u003ehbase", "value": 1}, {"id": "hbase", "label": "hbase", "shape": "dot", "title": "hbase Neighbors:\u003cbr\u003eaccumulo\u003cbr\u003emongodb\u003cbr\u003ehdfs\u003cbr\u003ecassandra\u003cbr\u003ehive", "value": 5}, {"id": "airflow", "label": "airflow", "shape": "dot", "title": "airflow Neighbors:\u003cbr\u003eapache nifi", "value": 1}, {"id": "apache nifi", "label": "apache nifi", "shape": "dot", "title": "apache nifi Neighbors:\u003cbr\u003eairflow\u003cbr\u003ekafka", "value": 2}, {"id": "apache beam", "label": "apache beam", "shape": "dot", "title": "apache beam Neighbors:\u003cbr\u003espark", "value": 1}, {"id": "spark", "label": "spark", "shape": "dot", "title": "spark Neighbors:\u003cbr\u003ehadoop\u003cbr\u003eapache flink\u003cbr\u003emapreduce\u003cbr\u003estorm\u003cbr\u003ehive\u003cbr\u003eapache beam", "value": 6}, {"id": "apache camel", "label": "apache camel", "shape": "dot", "title": "apache camel Neighbors:\u003cbr\u003ekafka", "value": 1}, {"id": "kafka", "label": "kafka", "shape": "dot", "title": "kafka Neighbors:\u003cbr\u003ekinesis\u003cbr\u003eapache camel\u003cbr\u003eapache nifi\u003cbr\u003eapache flink\u003cbr\u003erabbitmq\u003cbr\u003eapache flume\u003cbr\u003eapache pulsar\u003cbr\u003eapache storm\u003cbr\u003eaws kinesis\u003cbr\u003eapache spark", "value": 10}, {"id": "apache flink", "label": "apache flink", "shape": "dot", "title": "apache flink Neighbors:\u003cbr\u003espark\u003cbr\u003ekafka", "value": 2}, {"id": "apache flume", "label": "apache flume", "shape": "dot", "title": "apache flume Neighbors:\u003cbr\u003ekafka", "value": 1}, {"id": "apache kafka", "label": "apache kafka", "shape": "dot", "title": "apache kafka Neighbors:\u003cbr\u003econfluent kafka\u003cbr\u003erabbitmq", "value": 2}, {"id": "confluent kafka", "label": "confluent kafka", "shape": "dot", "title": "confluent kafka Neighbors:\u003cbr\u003eapache kafka", "value": 1}, {"id": "rabbitmq", "label": "rabbitmq", "shape": "dot", "title": "rabbitmq Neighbors:\u003cbr\u003eapache kafka\u003cbr\u003ekafka", "value": 2}, {"id": "apache pulsar", "label": "apache pulsar", "shape": "dot", "title": "apache pulsar Neighbors:\u003cbr\u003ekafka", "value": 1}, {"id": "apache spark", "label": "apache spark", "shape": "dot", "title": "apache spark Neighbors:\u003cbr\u003ehadoop\u003cbr\u003estorm\u003cbr\u003ekafka", "value": 3}, {"id": "hadoop", "label": "hadoop", "shape": "dot", "title": "hadoop Neighbors:\u003cbr\u003emongodb\u003cbr\u003ebig data\u003cbr\u003enosql\u003cbr\u003espark\u003cbr\u003ecassandra\u003cbr\u003ehive\u003cbr\u003eapache spark", "value": 7}, {"id": "storm", "label": "storm", "shape": "dot", "title": "storm Neighbors:\u003cbr\u003espark\u003cbr\u003eapache spark", "value": 2}, {"id": "apache storm", "label": "apache storm", "shape": "dot", "title": "apache storm Neighbors:\u003cbr\u003ekafka", "value": 1}, {"id": "aws kinesis", "label": "aws kinesis", "shape": "dot", "title": "aws kinesis Neighbors:\u003cbr\u003ekafka", "value": 1}, {"id": "bee hive", "label": "bee hive", "shape": "dot", "title": "bee hive Neighbors:\u003cbr\u003ewasp hive", "value": 1}, {"id": "wasp hive", "label": "wasp hive", "shape": "dot", "title": "wasp hive Neighbors:\u003cbr\u003ebee hive", "value": 1}, {"id": "big data", "label": "big data", "shape": "dot", "title": "big data Neighbors:\u003cbr\u003ehadoop", "value": 1}, {"id": "bigquery", "label": "bigquery", "shape": "dot", "title": "bigquery Neighbors:\u003cbr\u003ebigtable\u003cbr\u003eredshift\u003cbr\u003esnowflake", "value": 3}, {"id": "bigtable", "label": "bigtable", "shape": "dot", "title": "bigtable Neighbors:\u003cbr\u003ebigquery", "value": 1}, {"id": "redshift", "label": "redshift", "shape": "dot", "title": "redshift Neighbors:\u003cbr\u003ebigquery", "value": 1}, {"id": "snowflake", "label": "snowflake", "shape": "dot", "title": "snowflake Neighbors:\u003cbr\u003ebigquery", "value": 1}, {"id": "cassandra", "label": "cassandra", "shape": "dot", "title": "cassandra Neighbors:\u003cbr\u003emongo\u003cbr\u003ehadoop\u003cbr\u003ehbase", "value": 3}, {"id": "mongo", "label": "mongo", "shape": "dot", "title": "mongo Neighbors:\u003cbr\u003ecassandra\u003cbr\u003emysql\u003cbr\u003eredis\u003cbr\u003esql", "value": 4}, {"id": "gfs", "label": "gfs", "shape": "dot", "title": "gfs Neighbors:\u003cbr\u003ehdfs", "value": 1}, {"id": "hdfs", "label": "hdfs", "shape": "dot", "title": "hdfs Neighbors:\u003cbr\u003egfs\u003cbr\u003ehbase\u003cbr\u003es3", "value": 3}, {"id": "hive", "label": "hive", "shape": "dot", "title": "hive Neighbors:\u003cbr\u003ehadoop\u003cbr\u003enest\u003cbr\u003epresto\u003cbr\u003ehbase\u003cbr\u003enest thermostat\u003cbr\u003eimpala\u003cbr\u003espark\u003cbr\u003epig", "value": 8}, {"id": "mongodb", "label": "mongodb", "shape": "dot", "title": "mongodb Neighbors:\u003cbr\u003ehadoop\u003cbr\u003ehbase", "value": 2}, {"id": "nosql", "label": "nosql", "shape": "dot", "title": "nosql Neighbors:\u003cbr\u003ehadoop\u003cbr\u003esql", "value": 2}, {"id": "hadoop fs", "label": "hadoop fs", "shape": "dot", "title": "hadoop fs Neighbors:\u003cbr\u003ehdfs dfs", "value": 1}, {"id": "hdfs dfs", "label": "hdfs dfs", "shape": "dot", "title": "hdfs dfs Neighbors:\u003cbr\u003ehadoop fs", "value": 1}, {"id": "s3", "label": "s3", "shape": "dot", "title": "s3 Neighbors:\u003cbr\u003ehdfs", "value": 1}, {"id": "impala", "label": "impala", "shape": "dot", "title": "impala Neighbors:\u003cbr\u003ehive", "value": 1}, {"id": "nest", "label": "nest", "shape": "dot", "title": "nest Neighbors:\u003cbr\u003ehive", "value": 1}, {"id": "nest thermostat", "label": "nest thermostat", "shape": "dot", "title": "nest thermostat Neighbors:\u003cbr\u003ehive", "value": 1}, {"id": "pig", "label": "pig", "shape": "dot", "title": "pig Neighbors:\u003cbr\u003ehive", "value": 1}, {"id": "presto", "label": "presto", "shape": "dot", "title": "presto Neighbors:\u003cbr\u003ehive", "value": 1}, {"id": "kinesis", "label": "kinesis", "shape": "dot", "title": "kinesis Neighbors:\u003cbr\u003ekafka", "value": 1}, {"id": "mapreduce", "label": "mapreduce", "shape": "dot", "title": "mapreduce Neighbors:\u003cbr\u003espark", "value": 1}, {"id": "mysql", "label": "mysql", "shape": "dot", "title": "mysql Neighbors:\u003cbr\u003emongo", "value": 1}, {"id": "redis", "label": "redis", "shape": "dot", "title": "redis Neighbors:\u003cbr\u003emongo", "value": 1}, {"id": "sql", "label": "sql", "shape": "dot", "title": "sql Neighbors:\u003cbr\u003enosql\u003cbr\u003emongo", "value": 2}]);
+        edges = new vis.DataSet([{"from": "accumulo", "to": "hbase", "value": 9}, {"from": "airflow", "to": "apache nifi", "value": 136}, {"from": "apache beam", "to": "spark", "value": 17}, {"from": "apache camel", "to": "kafka", "value": 21}, {"from": "apache flink", "to": "kafka", "value": 41}, {"from": "apache flink", "to": "spark", "value": 56}, {"from": "apache flume", "to": "kafka", "value": 21}, {"from": "apache kafka", "to": "confluent kafka", "value": 28}, {"from": "apache kafka", "to": "rabbitmq", "value": 93}, {"from": "apache nifi", "to": "kafka", "value": 141}, {"from": "apache pulsar", "to": "kafka", "value": 38}, {"from": "apache spark", "to": "hadoop", "value": 121}, {"from": "apache spark", "to": "kafka", "value": 64}, {"from": "apache spark", "to": "storm", "value": 62}, {"from": "apache storm", "to": "kafka", "value": 68}, {"from": "aws kinesis", "to": "kafka", "value": 100}, {"from": "bee hive", "to": "wasp hive", "value": 14}, {"from": "big data", "to": "hadoop", "value": 43}, {"from": "bigquery", "to": "bigtable", "value": 44}, {"from": "bigquery", "to": "redshift", "value": 61}, {"from": "bigquery", "to": "snowflake", "value": 25}, {"from": "cassandra", "to": "hadoop", "value": 31}, {"from": "cassandra", "to": "hbase", "value": 100}, {"from": "cassandra", "to": "mongo", "value": 14}, {"from": "gfs", "to": "hdfs", "value": 22}, {"from": "hadoop", "to": "hive", "value": 121}, {"from": "hadoop", "to": "mongodb", "value": 30}, {"from": "hadoop", "to": "nosql", "value": 21}, {"from": "hadoop", "to": "spark", "value": 184}, {"from": "hadoop fs", "to": "hdfs dfs", "value": 37}, {"from": "hbase", "to": "hdfs", "value": 125}, {"from": "hbase", "to": "hive", "value": 122}, {"from": "hbase", "to": "mongodb", "value": 54}, {"from": "hdfs", "to": "s3", "value": 67}, {"from": "hive", "to": "impala", "value": 45}, {"from": "hive", "to": "nest", "value": 100}, {"from": "hive", "to": "nest thermostat", "value": 25}, {"from": "hive", "to": "pig", "value": 46}, {"from": "hive", "to": "presto", "value": 18}, {"from": "hive", "to": "spark", "value": 82}, {"from": "kafka", "to": "kinesis", "value": 100}, {"from": "kafka", "to": "rabbitmq", "value": 88}, {"from": "mapreduce", "to": "spark", "value": 9}, {"from": "mongo", "to": "mysql", "value": 24}, {"from": "mongo", "to": "redis", "value": 14}, {"from": "mongo", "to": "sql", "value": 20}, {"from": "nosql", "to": "sql", "value": 1}, {"from": "spark", "to": "storm", "value": 55}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+
+        
+
+
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>

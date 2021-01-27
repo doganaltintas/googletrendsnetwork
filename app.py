@@ -21,19 +21,27 @@ def load_data(xinputList):
 
 
     xresultList = []
+    xinputList = xinputList.lower()
+    xinputList = xinputList.replace(" ," ,",")
+    xinputList = xinputList.replace(", " ,",")
     xlist = xinputList.split(",")
     for xtext in xlist:
         pytrends.build_payload([f"{xtext} vs"], cat=0, timeframe="all", geo='', gprop='')
         pytrends.interest_over_time()
         df = pytrends.related_queries()
         xresult = pd.DataFrame(df[f"{xtext} vs"]["top"])
-
         parser(xtext)
-        xresult["compare"] = xresult["query"].apply(parser)
-        xresult = xresult[xresult["compare"] != "0"] 
-        xmap = xresult["compare"].str.split("vs",expand=True)
-        xmap["power"] = xresult["value"]
-        xresultList.append(xmap)
+        try: 
+            xresult["compare"] = xresult["query"].apply(parser)
+            xresult = xresult[xresult["compare"] != "0"] 
+            xmap = xresult["compare"].str.split("vs",expand=True)
+            xmap["power"] = xresult["value"]
+            xresultList.append(xmap)
+        except:
+            pass
+
+
+
 
     xconcat_1 = pd.concat(xresultList)
     xconcat_2 = pd.concat(xresultList)
