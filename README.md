@@ -1,4 +1,4 @@
-# Google Trend Network Analysis
+# Google Trends Network Analysis
 
 Hello, you can access the live application from the link below.
 
