@@ -42,42 +42,45 @@ def load_data(xinputList):
 
 
 
+    if len(xresultList) > 0:
+        xconcat_1 = pd.concat(xresultList)
+        xconcat_2 = pd.concat(xresultList)
+        xconcat_1 = xconcat_1.reset_index(drop=True)
+        xconcat_2 = xconcat_2.reset_index(drop=True)
+        xconcat_1.columns = ["from","to","power"]
+        xconcat_2.columns = ["to","from","power"]
+        xconcat = pd.concat([xconcat_1,xconcat_2],axis=0) 
+        xconcat["from"] = xconcat["from"].str.strip()
+        xconcat["to"]= xconcat["to"].str.strip()
+        xconcat = xconcat.groupby(["from","to"]).sum().reset_index(drop=False)
 
-    xconcat_1 = pd.concat(xresultList)
-    xconcat_2 = pd.concat(xresultList)
-    xconcat_1 = xconcat_1.reset_index(drop=True)
-    xconcat_2 = xconcat_2.reset_index(drop=True)
-    xconcat_1.columns = ["from","to","power"]
-    xconcat_2.columns = ["to","from","power"]
-    xconcat = pd.concat([xconcat_1,xconcat_2],axis=0) 
-    xconcat["from"] = xconcat["from"].str.strip()
-    xconcat["to"]= xconcat["to"].str.strip()
-    xconcat = xconcat.groupby(["from","to"]).sum().reset_index(drop=False)
+        got_net = Network("900px", "700px",heading='Network Map - Click and Move',notebook=True)
 
-    got_net = Network("900px", "700px",heading='Network Map - Click and Move',notebook=True)
+        sources = xconcat['from']
+        targets = xconcat['to']
+        weights = xconcat['power']
 
-    sources = xconcat['from']
-    targets = xconcat['to']
-    weights = xconcat['power']
+        edge_data = zip(sources, targets, weights)
 
-    edge_data = zip(sources, targets, weights)
+        for e in edge_data:
+            src = e[0]
+            dst = e[1]
+            w = e[2]
 
-    for e in edge_data:
-        src = e[0]
-        dst = e[1]
-        w = e[2]
+            got_net.add_node(src, src, title=src)
+            got_net.add_node(dst, dst, title=dst)
+            got_net.add_edge(src, dst, value=w)
 
-        got_net.add_node(src, src, title=src)
-        got_net.add_node(dst, dst, title=dst)
-        got_net.add_edge(src, dst, value=w)
+        neighbor_map = got_net.get_adj_list()
 
-    neighbor_map = got_net.get_adj_list()
+        for node in got_net.nodes:
+            node["title"] += " Neighbors:<br>" + "<br>".join(neighbor_map[node["id"]])
+            node["value"] = len(neighbor_map[node["id"]])
 
-    for node in got_net.nodes:
-        node["title"] += " Neighbors:<br>" + "<br>".join(neighbor_map[node["id"]])
-        node["value"] = len(neighbor_map[node["id"]])
+        got_net.show("output.html")
+    else:
+        return "error"
 
-    got_net.show("output.html")
     
 
 
@@ -86,10 +89,13 @@ st.sidebar.header("Network Analysis with Google Trends")
 path1 = st.sidebar.text_input('Keywords  (please use comma for multiple keywords, e.g.: hadoop,spark,nifi)')  
 if st.sidebar.button("Build Network!"):
     if len(path1) > 3:
-        load_data(path1)
-        HtmlFile = open("output.html", 'r', encoding='utf-8')
-        source_code = HtmlFile.read() 
-        components.html(source_code, height = 1000,width=800)
+        if load_data(path1) != "error":
+            HtmlFile = open("output.html", 'r', encoding='utf-8')
+            source_code = HtmlFile.read() 
+            components.html(source_code, height = 1000,width=800)
+        else:
+            st.sidebar.write("No Result")
+
     else: 
         st.sidebar.write("Error: Too short Input")
 
