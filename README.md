@@ -8,6 +8,4 @@ A big THANK YOU to Streamlit Team!
 
 ![Screenshot](screenshot.png)
 
-Dogan Altintas 
-test
-
+Dogan Altintas
